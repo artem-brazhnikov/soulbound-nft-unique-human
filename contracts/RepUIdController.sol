@@ -67,7 +67,7 @@ contract RepUIdController {
         nullifierHashes[nullifierHash] = msg.sender;
 
         // // your logic here, make sure to emit some kind of event afterwards!
-        repUBoundNft.issueRepUBound(msg.sender, "https://ipfs.co");
+        repUBoundNft.issueRepUBound(msg.sender, "ipfs://QmeiwY28K8ZKyYynxi5cUUDR1EDawGPGV8Va9YkzsmR6f3");
 
         emit RepUIdCreated(msg.sender, nullifierHash);
     }

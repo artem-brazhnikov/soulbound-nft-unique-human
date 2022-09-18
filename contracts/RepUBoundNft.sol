@@ -25,10 +25,6 @@ contract RepUBoundNft is ERC721, ERC721URIStorage, Pausable, AccessControl, ERC7
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "https://ipfs.co";
-    }
-
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
     }

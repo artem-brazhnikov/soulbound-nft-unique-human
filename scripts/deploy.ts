@@ -2,15 +2,16 @@ import { ethers } from 'hardhat'
 
 async function main() {
     const worldIDAddress = await fetch('https://developer.worldcoin.org/api/v1/contracts')
-        .then(res => res.json() as Promise<{ key: string; value: string }[]>)
-        .then(res => res.find(({ key }) => key === 'staging.semaphore.wld.eth').value)
+         .then(res => res.json() as Promise<{ key: string; value: string }[]>)
+         .then(res => res.find(({ key }) => key === 'staging.semaphore.wld.eth').value)
 
-    const ContractFactory = await ethers.getContractFactory('Contract')
-    const contract = await ContractFactory.deploy(worldIDAddress)
+    console.log(`WorldIDAddress: ${worldIDAddress}`)
+    const RepUIdControllerFactory = await ethers.getContractFactory('RepUIdController')
+    const repuIdController = await RepUIdControllerFactory.deploy(worldIDAddress)
 
-    await contract.deployed()
+    await repuIdController.deployed()
 
-    console.log('Contract deployed to:', contract.address)
+    console.log('Contract deployed to:', repuIdController.address)
 }
 
 main().catch(error => {
