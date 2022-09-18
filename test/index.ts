@@ -44,9 +44,21 @@ describe('RepUIdController', function () {
 
         // extra checks here
         const registeredIdentity = await repUIdController.identityOfNullifier(nullifierHash);
-        expect(registeredIdentity).to.equal(callerAddr, "This nullifer hash must correspond a different address");
+        expect(registeredIdentity).to.equal(callerAddr, "This nullifer hash must correspond to a different address");
     })
+    it('Emits a RepU Identity created event', async function () {
+        await registerIdentity()
 
+        const [nullifierHash, proof] = await getProof(repUIdController.address, callerAddr)
+
+        await expect(repUIdController.verifyAndExecute(
+            callerAddr,
+            await getRoot(),
+            nullifierHash,
+            proof
+        )).to.emit(repUIdController, "RepUIdCreated")
+        .withArgs(callerAddr, nullifierHash);
+    })
     it('Rejects duplicated calls', async function () {
         await registerIdentity()
 
