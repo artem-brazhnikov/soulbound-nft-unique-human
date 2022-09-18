@@ -7,7 +7,7 @@ import { RepUBoundNft } from './RepUBoundNft.sol';
 
 contract RepUIdController {
 
-    event RepUIdCreated(address indexed to, uint256 indexed tokenId, uint256 indexed nullifierHash);
+    event RepUIdCreated(address indexed to, uint256 indexed nullifierHash);
 
     using ByteHasher for bytes;
 
@@ -25,14 +25,18 @@ contract RepUIdController {
     uint256 internal immutable groupId = 1;
 
     /// @dev Whether a nullifier hash has been used already. Used to prevent double-signaling
-    mapping(uint256 => bool) internal nullifierHashes;
+    mapping(uint256 => address) internal nullifierHashes;
 
-    //RepUBoundNft private repUBoundNft;
+    RepUBoundNft internal repUBoundNft;
 
     /// @param _worldId The WorldID instance that will verify the proofs
     constructor(IWorldID _worldId) {
         worldId = _worldId;
-        //repUBoundNft = new RepUBoundNft();
+        repUBoundNft = new RepUBoundNft();
+    }
+
+    function identityOfNullifier(uint256 nullifierHash) external view returns (address) {
+        return nullifierHashes[nullifierHash];
     }
 
     /// @param input User's input, used as the signal. Could be something else! (see README)
@@ -47,7 +51,7 @@ contract RepUIdController {
         uint256[8] calldata proof
     ) public {
         // first, we make sure this person hasn't done this before
-        if (nullifierHashes[nullifierHash]) revert InvalidNullifier();
+        if (nullifierHashes[nullifierHash] != address(0)) revert InvalidNullifier();
 
         // then, we verify they're registered with WorldID, and the input they've provided is correct
         worldId.verifyProof(
@@ -60,11 +64,11 @@ contract RepUIdController {
         );
 
         // finally, we record they've done this, so they can't do it again (proof of uniqueness)
-        nullifierHashes[nullifierHash] = true;
+        nullifierHashes[nullifierHash] = msg.sender;
 
         // // your logic here, make sure to emit some kind of event afterwards!
-        // uint256 tokenId = repUBoundNft.issueRepUBound(msg.sender, "");
+        repUBoundNft.issueRepUBound(msg.sender, "https://ipfs.co");
 
-        // emit RepUIdCreated(msg.sender, tokenId, nullifierHash);
+        emit RepUIdCreated(msg.sender, nullifierHash);
     }
 }

@@ -37,16 +37,14 @@ contract RepUBoundNft is ERC721, ERC721URIStorage, Pausable, AccessControl, ERC7
         _unpause();
     }
 
-    function issueRepUBound(address to, string memory uri) public onlyRole(MINTER_ROLE) returns (uint256 tokenId) {
+    function issueRepUBound(address to, string memory uri) public onlyRole(MINTER_ROLE) {
         require(balanceOf(to) == 0, "RepUBoundNft: The address already has a RepUBoundNft");
         
-        tokenId = _tokenIdCounter.current();
+        uint256 tokenId = _tokenIdCounter.current();
         
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
-        
-        return tokenId;
     }
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
