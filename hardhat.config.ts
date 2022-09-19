@@ -34,7 +34,10 @@ const config: HardhatUserConfig = {
         currency: 'USD',
     },
     etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY,
+        apiKey: {
+            mainnet: process.env.ETHERSCAN_API_KEY,
+            polygonMumbai: process.env.POLYGONSCAN_API_KEY
+        },
     },
     dependencyCompiler: {
         paths: [
