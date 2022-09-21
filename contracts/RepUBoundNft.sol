@@ -4,12 +4,13 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract RepUBoundNft is ERC721, ERC721URIStorage, Pausable, AccessControl, ERC721Burnable {
+contract RepUBoundNft is ERC721, ERC721Enumerable, ERC721URIStorage, Pausable, AccessControl, ERC721Burnable {
     
     error RepUBoundNonTransferrable();
 
@@ -46,7 +47,7 @@ contract RepUBoundNft is ERC721, ERC721URIStorage, Pausable, AccessControl, ERC7
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         whenNotPaused
-        override
+        override(ERC721, ERC721Enumerable)
     {
         if (from != address(0)) {
             revert RepUBoundNonTransferrable();
@@ -72,7 +73,7 @@ contract RepUBoundNft is ERC721, ERC721URIStorage, Pausable, AccessControl, ERC7
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, AccessControl)
+        override(ERC721, ERC721Enumerable, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
